@@ -1,0 +1,2 @@
+[console_scripts]
+fbid = fbid.cli:app

@@ -1,0 +1,18 @@
+# Ядро (дублирует dependencies из pyproject.toml для совместимости с pip).
+httpx>=0.27
+pydantic>=2.6
+pydantic-settings>=2.2
+typer>=0.12
+tenacity>=8.2
+pandas>=2.2
+openpyxl>=3.1
+python-dotenv>=1.0
+loguru>=0.7
+gspread>=6.0
+google-auth>=2.29
+
+# Опционально (ставить по необходимости):
+#   pip install -e '.[browser]'   -> playwright (+ playwright install chromium)
+#   pip install -e '.[enrich]'    -> dadata
+#   pip install -e '.[partners]'  -> selectolax (режим partners и рассылка)
+#   pip install -e '.[dev]'       -> pytest, pytest-asyncio

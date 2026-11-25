@@ -1,0 +1,10 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+# Профили браузера = живые сессии бирж. НИКОГДА не коммитим.
+profiles/
+data/
+*.db
+*.log
+.DS_Store

@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "leadgen-parser"
+version = "0.1.0"
+description = "CLI для сбора базы организаций (лидов) с карт 2ГИС и Яндекс для ручного B2B-аутрича."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.27",
+    "pydantic>=2.6",
+    "pydantic-settings>=2.2",
+    "typer>=0.12",
+    "tenacity>=8.2",
+    "pandas>=2.2",
+    "openpyxl>=3.1",
+    "python-dotenv>=1.0",
+    "loguru>=0.7",
+    "gspread>=6.0",
+    "google-auth>=2.29",
+]
+
+[project.optional-dependencies]
+# Запасной браузерный режим (после установки: `playwright install chromium`).
+browser = ["playwright>=1.44"]
+# Шаг обогащения через официальный API DaData.
+enrich = ["dadata>=21.10"]
+# Режим partners: парсинг HTML каталогов и сайтов агентств (сбор email/контактов).
+partners = ["selectolax>=0.3.21"]
+# Разработка и тесты.
+# Разработка и тесты. selectolax здесь не лишний: тесты импортируют
+# parser.cli, а тот тянет разбор HTML — без него `pip install -e '.[dev]'`
+# в чистой venv даёт красный прогон на ровном месте. ruff — потому что
+# команда линта из регламента иначе просто не запускается.
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23", "ruff>=0.5", "selectolax>=0.3.21"]
+
+[project.scripts]
+parser = "parser.cli:app"
+
+[tool.setuptools.packages.find]
+include = ["parser*"]
+
+[tool.pytest.ini_options]
+markers = [
+    "network: тесты, ходящие в сеть/внешние API — пропускать по умолчанию: -m 'not network'",
+]
+
+[tool.ruff]
+# Те же правила, что у orbit и freelance-bid: команда линта из регламента
+# должна означать во всех трёх проектах одно и то же. Без конфига ruff судил
+# leadgen по своему полному набору правил, и «144 ошибки» были не про код,
+# а про разные мерки.
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "BLE"]
+ignore = [
+    "SIM108",  # тернарник вместо if не всегда читаемее
+    "B008",    # typer.Option в аргументах по умолчанию — его штатный способ
+]

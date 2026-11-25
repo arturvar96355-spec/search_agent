@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "freelance-bid"
+version = "0.1.0"
+description = "Парсер заказов с фриланс-бирж (FL.ru, Profi.ru) с автооткликом и уведомлениями в Telegram."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.27",
+    "pydantic>=2.6",
+    "pydantic-settings>=2.2",
+    "typer>=0.12",
+    "tenacity>=8.2",
+    "python-dotenv>=1.0",
+    "loguru>=0.7",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# Браузер нужен для авторизованных действий: полное ТЗ, отклик, баланс Profi.
+browser = ["playwright>=1.44"]
+# Генерация текстов откликов через Claude API.
+llm = ["anthropic>=0.40"]
+# ruff объявлен здесь, а не «поставлен руками»: команда линта из регламента
+# должна работать сразу после пересоздания venv.
+dev = ["pytest>=8.0", "ruff>=0.5"]
+
+[project.scripts]
+fbid = "fbid.cli:app"
+
+[tool.setuptools.packages.find]
+include = ["fbid*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+# Линтер зафиксирован явно, чтобы `ruff check` давал один и тот же результат
+# у владельца, у разработчика на сервере и в CI — без этого набор правил
+# зависит от версии ruff, и «чисто» у одного значит «35 ошибок» у другого.
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+# BLE включён намеренно: в коде есть места, где `except Exception` — осознанный
+# выбор (упавшая биржа не должна гасить проход), и каждое помечено noqa с
+# объяснением. Без правила эти пометки перестают что-либо значить.
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "BLE"]
+ignore = [
+    # datetime.UTC вместо timezone.utc: код читают через год, timezone.utc понятнее.
+    "UP017",
+    # Строковые аннотации нужны там, где тип объявлен ниже по файлу.
+    "UP037",
+    "RUF001",  # кириллица в строках — это язык проекта, а не опечатка
+    "RUF002",
+    "RUF003",
+    # str+Enum вместо StrEnum: менять ради стиля то, на чём держится сериализация
+    # заказов в базу, смысла нет.
+    "UP042",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]
+# Системный промт — это текст для модели, его переносы менять нельзя.
+"fbid/llm.py" = ["E501"]

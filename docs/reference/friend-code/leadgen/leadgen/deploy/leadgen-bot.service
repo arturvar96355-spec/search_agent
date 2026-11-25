@@ -1,0 +1,40 @@
+[Unit]
+Description=leadgen Telegram bot (сбор B2B-лидов с 2ГИС)
+After=network-online.target
+Wants=network-online.target
+
+# Предохранитель от crash-loop: 5 стартов за 60с — и systemd перестаёт поднимать сервис.
+# Директивы StartLimit* живут ТОЛЬКО в [Unit]; в [Service] systemd их молча игнорирует
+# («Unknown key name … ignoring» в daemon-reload), и защиты не будет вовсе.
+# Проверить, что применились: systemctl show leadgen-bot -p StartLimitBurst
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+# Пользователь-сервис. Создавать ОБЯЗАТЕЛЬНО с домашним каталогом (-m): playwright держит
+# Chromium в $HOME/.cache/ms-playwright, без $HOME браузер не найдётся в рантайме.
+#   sudo useradd -r -m -d /home/leadgen -s /usr/sbin/nologin leadgen
+User=leadgen
+Group=leadgen
+# ОБЯЗАТЕЛЬНО: путь к проекту. .env читается отсюда (config.py уже берёт абсолютный путь,
+# но WorkingDirectory нужен для output/ и относительных путей).
+WorkingDirectory=/opt/leadgen
+ExecStart=/opt/leadgen/.venv/bin/parser bot
+
+# Автоперезапуск при краше/OOM (предел числа рестартов — StartLimit* в секции [Unit] выше).
+Restart=always
+RestartSec=5
+
+# КРИТИЧНО для 2 ГБ: cgroup убьёт ТОЛЬКО бота (если Chromium раздуется), а не весь VPS.
+# Оставляем системе запас. OOMPolicy=continue — не тащить за собой другие юниты.
+MemoryHigh=1200M
+MemoryMax=1400M
+OOMPolicy=continue
+
+# Немного изоляции (не обязательно, но полезно).
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

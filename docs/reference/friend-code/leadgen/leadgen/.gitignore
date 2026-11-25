@@ -1,0 +1,21 @@
+# Секреты
+.env
+service_account*.json
+*credentials*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# Данные и выгрузки
+output/
+*.jsonl
+
+# OS / IDE
+.DS_Store
+.idea/

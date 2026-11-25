@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orbit</title>
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/app.css">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+
+<header class="top">
+  <span class="mark" id="mark"></span>
+  <span class="name">Orbit</span>
+  <span class="who" id="who"></span>
+</header>
+
+<main>
+  <!-- Главное -->
+  <section class="view" id="view-home">
+    <div class="panel">
+      <header><h1>Требует вас</h1><span class="eyebrow" id="today"></span></header>
+      <div class="in tight" id="needs"><p class="loading">Читаю…</p></div>
+    </div>
+
+    <div class="panel">
+      <header><h2>Сегодня</h2></header>
+      <div class="tiles" id="tiles"></div>
+    </div>
+
+    <div class="panel">
+      <header><h2>Итоги дня</h2><span class="eyebrow" id="digest-day"></span></header>
+      <div class="text" id="digest">Читаю…</div>
+    </div>
+  </section>
+
+  <!-- Воронка -->
+  <section class="view" id="view-funnel" hidden>
+    <div class="panel">
+      <div class="chips" id="period">
+        <button class="chip" data-days="7" aria-pressed="true">7 дней</button>
+        <button class="chip" data-days="14" aria-pressed="false">14 дней</button>
+        <button class="chip" data-days="30" aria-pressed="false">30 дней</button>
+        <button class="chip" data-days="90" aria-pressed="false">90 дней</button>
+      </div>
+      <div class="chart" id="chart"></div>
+      <div class="legend">
+        <span><i></i>писем ушло</span>
+        <span class="faded"><i></i>ответов</span>
+      </div>
+    </div>
+    <div class="panel">
+      <header><h2>Деньги на биржах</h2></header>
+      <div class="tiles" id="money"></div>
+    </div>
+    <div id="funnels"></div>
+  </section>
+
+  <!-- Отклики -->
+  <section class="view" id="view-bids" hidden>
+    <div class="panel">
+      <div class="chips" id="kindsbid">
+        <button class="chip" data-kind="sent" aria-pressed="true">Отправленные</button>
+        <button class="chip" data-kind="replied" aria-pressed="false">Ответили</button>
+        <button class="chip" data-kind="all" aria-pressed="false">Все решения</button>
+      </div>
+      <div class="chips" id="sources">
+        <button class="chip" data-source="" aria-pressed="true">Обе биржи</button>
+        <button class="chip" data-source="fl" aria-pressed="false">FL.ru</button>
+        <button class="chip" data-source="profi" aria-pressed="false">Profi.ru</button>
+      </div>
+      <div class="rows" id="bids"><p class="loading">Читаю…</p></div>
+    </div>
+  </section>
+
+  <!-- Контакты -->
+  <section class="view" id="view-base" hidden>
+    <div class="panel">
+      <div class="in"><input class="search" id="q" type="search" placeholder="Название, почта, сайт или телефон"></div>
+      <div class="chips" id="kinds">
+        <button class="chip" data-kind="partner" aria-pressed="true">Партнёры</button>
+        <button class="chip" data-kind="client" aria-pressed="false">Клиенты</button>
+      </div>
+      <div class="chips" id="stages">
+        <button class="chip" data-stage="all" aria-pressed="true">Все</button>
+        <button class="chip" data-stage="new" aria-pressed="false">Новые</button>
+        <button class="chip" data-stage="written" aria-pressed="false">Написали</button>
+        <button class="chip" data-stage="replied" aria-pressed="false">Ответили</button>
+        <button class="chip" data-stage="call" aria-pressed="false">На созвон</button>
+        <button class="chip" data-stage="deal" aria-pressed="false">В работе</button>
+      </div>
+      <div class="rows" id="contacts"><p class="loading">Читаю…</p></div>
+    </div>
+  </section>
+
+  <!-- Система -->
+  <section class="view" id="view-system" hidden>
+    <div class="panel">
+      <header><h2>Очередь писем</h2><span class="eyebrow" id="queue-count"></span></header>
+      <div class="rows" id="queue"><p class="loading">Читаю…</p></div>
+    </div>
+    <div class="panel">
+      <header><h2>Что работает</h2></header>
+      <div id="health"><p class="loading">Проверяю…</p></div>
+    </div>
+    <div class="panel">
+      <header><h2>Что дёргать сразу</h2><span class="eyebrow">остальное — в сводке</span></header>
+      <div class="rows" id="switches"><p class="loading">Читаю…</p></div>
+    </div>
+  </section>
+</main>
+
+<nav class="tabs" id="tabs">
+  <button class="tab" data-view="home" aria-selected="true">
+    <svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg>Главное
+  </button>
+  <button class="tab" data-view="funnel" aria-selected="false">
+    <svg viewBox="0 0 24 24"><path d="M4 5h16l-6 7v6l-4 2v-8z"/></svg>Воронка
+  </button>
+  <button class="tab" data-view="bids" aria-selected="false">
+    <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M4 7l8 6 8-6"/></svg>Отклики
+  </button>
+  <button class="tab" data-view="base" aria-selected="false">
+    <svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>База
+  </button>
+  <button class="tab" data-view="system" aria-selected="false">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>Система
+  </button>
+</nav>
+
+<script src="/app.js"></script>
+</body>
+</html>

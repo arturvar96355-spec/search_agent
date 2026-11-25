@@ -1,0 +1,32 @@
+[Unit]
+Description=freelance-bid: сбор заказов с фриланс-бирж и автоотклик
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/freelance-bid
+EnvironmentFile=/opt/freelance-bid/.env
+
+# Playwright запускается не headless: биржи агрессивнее относятся к headless-браузеру,
+# поэтому поднимаем виртуальный дисплей.
+ExecStart=/usr/bin/xvfb-run -a --server-args="-screen 0 1440x900x24" \
+    /opt/freelance-bid/.venv/bin/python -m fbid.cli watch
+
+Restart=always
+RestartSec=30
+
+# Chromium может распухнуть и уронить соседей по серверу.
+MemoryMax=1400M
+
+# Логи уходят в journald: journalctl -u freelance-bid -f
+StandardOutput=journal
+StandardError=journal
+
+# Профили браузера — это живые доступы к аккаунтам бирж.
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

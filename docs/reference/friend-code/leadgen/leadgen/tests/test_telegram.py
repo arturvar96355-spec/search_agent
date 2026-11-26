@@ -113,7 +113,7 @@ def test_keyboard_shape():
 @pytest.mark.parametrize(
     ("raw", "secret"),
     [
-        ("Cannot connect to proxy http://gfotmq78:w2c8s76d@p12576.ltespace.net:12576", "w2c8s76d"),
+        ("Cannot connect to proxy http://user:REDACTED@proxy.example:12576", "REDACTED"),
         ("net::ERR_TUNNEL_CONNECTION_FAILED at http://user:pass@proxy:8080", "pass@"),
         ("https://login:VeryS3cret@host/path не отвечает", "VeryS3cret"),
     ],

@@ -219,7 +219,7 @@ systemctl stop leadgen-bot && cd /root && tar -xzf leadgen.tar.gz && systemctl s
 заработает сам. Вот она же явно:
 
 ```
-PROXY_URL=http://vz4dkbu3:n14e39wh@p10101.ltespace.net:10101
+PROXY_URL=http://ЛОГИН:ПАРОЛЬ@ХОСТ:ПОРТ
 ```
 
 Проверка после установки: `parser proxy-check` — должен показать российский мобильный IP
